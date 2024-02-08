@@ -1,62 +1,22 @@
 
-# [旧商品データ]テーブルからの[カテゴリーデータ]テーブル作成の要件
+# 移行処理の要件
 
+### 概要
+- テーブル定義
+- original テーブルから category テーブルへのレコードの取り込み
+- original テーブルから items テーブルへのレコードの取り込み
+- 処理の開始、終了、処理結果、途中経過の出力
+- エラーレコードの出力
+- ロールバック
+- 処理時間
 
-### 1. 各テーブルの定義
+### 1. テーブル定義
 
-[ER 図](#er-図) の内容を参考に、DDL を作成してください。
-
-DDL には、以下のテーブルを含めてください。DB 名は自由に決めてください。
-
-- original
-- category
-- items
-
-
-### 2. TSV ファイルのデータを original テーブルに取り込む
-
-TSV ファイルの全レコードを、original テーブルに挿入してください。
-
-### 3. original テーブルから category テーブルにレコードを取り込む
-
-original テーブルから category テーブルにカテゴリ情報を取り込んでください。
-
-original テーブルには `/` 区切りで商品のカテゴリが記載されたカラムがあります。
-
-```plaintext
-Men/Tops/T-shirts
-```
-
-これらを次の形式で category テーブルに格納してください。
-
-| id  | name    | parent_id | name_all          |
-| --- | ------- | --------- | ----------------- |
-| 1   | Men     | null      | null              |
-| 2   | Tops    | 1         | null              |
-| 3   | T-shirt | 2         | Men/Tops/T-shirts |
-
-- 最上位カテゴリの `Men` には、parent_id、name_all に `null` を設定
-- 次のカテゴリである `Tops` には、親である `Men` の id が parent_id として入り、name_all は `null` を設定
-- 最下位カテゴリである `T-shirts` の parent_id は `Tops` の id が入り、name_all には**上層カテゴリの name をスラッシュで連結した文字列**を設定
-
-ただし、original テーブル上のデータでカテゴリが 4 つ以上に分解できるデータについては、3 つ目のカテゴリまでを category テーブルに格納してください。
-
-```plaintext
-例:
-Men/Clothes/Tops/T-shirts
--> Men/Clothes/Tops までカテゴリテーブルに追加する。T-shirts は追加しない。
-```
-
-### 4. original テーブルから items テーブルにレコードを取り込む
-
-original テーブルから items テーブルに商品情報を取り込んでください。
-`original.conditino_id` は、値をそのまま `items.condition` に設定してください。
-
-### ER 図
+各テーブルの定義は以下の通り（DB 名は自由に決めてよい）
 
 ```mermaid
 ---
-title: 商品データ管理 DB
+title: ER図
 ---
 erDiagram
 
@@ -68,7 +28,6 @@ erDiagram
         int category
         string brand
         double price
-        int stock
         int shipping
         string description
     }
@@ -94,3 +53,58 @@ erDiagram
     category ||--o{ category : has
     category ||--o{ items : has
 ```
+
+### 2. original テーブルから category テーブルへのレコードの取り込み
+
+original テーブルの「category_name」列の値を元に category テーブルを作成する
+
+「category_name」列は `/` 区切りで商品のカテゴリが記載されている
+
+```plaintext
+Men/Tops/T-shirts
+```
+
+これらを次の形式で category テーブルに格納する
+
+| id  | name    | parent_id | name_all          |
+| --- | ------- | --------- | ----------------- |
+| 1   | Men     | null      | null              |
+| 2   | Tops    | 1         | null              |
+| 3   | T-shirt | 2         | Men/Tops/T-shirts |
+
+- 最上位カテゴリの `Men` には、parent_id、name_all に `null` を設定
+- 次のカテゴリである `Tops` には、親である `Men` の id が parent_id として入り、name_all は `null` を設定
+- 最下位カテゴリである `T-shirts` の parent_id は `Tops` の id が入り、name_all には**上層カテゴリの name をスラッシュで連結した文字列**を設定
+
+ただし、original テーブル上のデータでカテゴリが 4 つ以上に分解できるデータについては、3 つ目のカテゴリまでを category テーブルに格納する（4階層目以下のカテゴリー情報は切り捨てて良い）
+
+```plaintext
+例:
+Men/Clothes/Tops/T-shirts
+-> Men/Clothes/Tops までカテゴリテーブルに追加する。T-shirts は追加しない
+```
+
+### ３. original テーブルから items テーブルへのレコードの取り込み
+
+original テーブルから items テーブルに商品情報を取り込む
+
+- `items.id`
+  - 自動採番
+
+- `items.name,brand,price,shipping,description`
+  - `original.name,brand,price,shipping,description` の値をそのまま設定する
+
+- `items.condition`
+  - `original.conditino_id` の値をそのまま設定する
+
+- `items.category`
+  - `original.category_name` を、「2.」で作成したcategoryテーブルの`id`に付け替えてセットする。また、４階層目以下のカテゴリーが割り当てられている商品は、3階層目までのカテゴリー情報でcategoryテーブルの`id`と紐付ける
+
+### 4. 処理の開始、終了、処理結果、途中経過の出力
+
+
+### 5. エラーレコードの出力
+original テーブルの `category_name` が `null` または `空` または３階層以上ないレコードは items テーブルには移行せず、エラーレコードとしてファイルに書き出す
+
+### 6. ロールバック
+処理の途中で例外が発生してしまった場合は、DB処理はすべてロールバックする
