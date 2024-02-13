@@ -98,7 +98,7 @@ original テーブルから items テーブルに商品情報を取り込む
 
 - `items.condition`
 
-  - `original.conditino_id` の値をそのまま設定する
+  - `original.condition_id` の値をそのまま設定する
 
 - `items.category`
   - `original.category_name` を、「2.」で作成した category テーブルの`id`に付け替えてセットする。また、４階層目以下のカテゴリーが割り当てられている商品は、3 階層目までのカテゴリー情報で category テーブルの`id`と紐付ける
