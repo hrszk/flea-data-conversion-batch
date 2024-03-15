@@ -1,0 +1,17 @@
+spring:
+    batch:
+        initialize-schema: always
+        job:
+            names: CategoryMigrateJob
+    # jdbc:
+    #     initialize-schema: always
+    #     schema: classpath:org/springframework/batch/core/schema-postgresql.sql
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/flea-data-conversion-batch
+        username: postgres
+        password: postgres
+
+logging:
+    level:
+        '[com.example.demo]': debug
