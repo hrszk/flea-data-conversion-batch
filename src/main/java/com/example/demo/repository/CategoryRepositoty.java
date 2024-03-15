@@ -29,6 +29,7 @@ public class CategoryRepositoty {
         return category;
     };
 
+    // カテゴリの追加
     public Category insertCategory(Category category){
         String sql="INSERT INTO category (name, parent_id, name_all) VALUES (:name,:parentId,:nameAll)";
         SqlParameterSource param=new BeanPropertySqlParameterSource(category);

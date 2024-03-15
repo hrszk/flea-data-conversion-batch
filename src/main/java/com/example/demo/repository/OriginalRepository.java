@@ -40,6 +40,7 @@ public class OriginalRepository {
         return result;
     }
 
+    // originalのデータを取得
     public List<Original> findAll(){
         String sql="SELECT * FROM original ORDER by id;";
         List<Original> originalList=template.query(sql,ORIGINAL_ROW_MAPPER);
