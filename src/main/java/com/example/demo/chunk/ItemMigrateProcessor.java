@@ -1,7 +1,7 @@
 package com.example.demo.chunk;
 
 
-import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,12 +14,14 @@ import com.example.demo.repository.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@StepScope
+@JobScope
 @Slf4j
 public class ItemMigrateProcessor implements ItemProcessor<Original,Item>{
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    public int count=0;
     
     @Override
     public Item process(Original item) throws Exception{
@@ -47,9 +49,17 @@ public class ItemMigrateProcessor implements ItemProcessor<Original,Item>{
                 return null;
             }
         }else{
+            count++;
             log.info("category_nameがnullのためスキップします");
             return null;
         }
+    }
 
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }
