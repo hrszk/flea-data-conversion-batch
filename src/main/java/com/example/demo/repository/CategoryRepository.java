@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.domain.Category;
 
 @Repository
-public class CategoryRepositoty {
+public class CategoryRepository {
     
     @Autowired
     private NamedParameterJdbcTemplate template;
@@ -65,6 +65,14 @@ public class CategoryRepositoty {
         SqlParameterSource param=new MapSqlParameterSource().addValue("name", name);
         List<Category> categoryList=template.query(sql,param,CATEGORY_ROW_MAPPER);
 
+        return categoryList.isEmpty() ? null : categoryList.get(0);
+    }
+
+    // nameAllでカテゴリを検索
+    public Category findByNameAll(String nameAll){
+        String sql="SELECT * FROM category WHERE name_all=:nameAll;";
+        SqlParameterSource param=new MapSqlParameterSource().addValue("nameAll",nameAll);
+        List<Category> categoryList=template.query(sql, param, CATEGORY_ROW_MAPPER);
         return categoryList.isEmpty() ? null : categoryList.get(0);
     }
 }
