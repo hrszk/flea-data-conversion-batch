@@ -62,7 +62,7 @@ public class BatchConfig {
     private DataSource dataSource;
 
     // INSERT用のSQL
-    private static final String INSERT_EMPLOYEE_SQL="""
+    private static final String INSERT_ITEM_SQL="""
         INSERT INTO items(name,condition,category,brand,price,shipping,description) 
         VALUES(:name,:condition,:category,:brand,:price,:shipping,:description);
             """;
@@ -71,8 +71,8 @@ public class BatchConfig {
     public Job categoryMigrateJob() {
         return this.jobBuilderFactory.get("CategoryMigrateJob")
         .incrementer(new RunIdIncrementer())
-        // .start(categoryMigrateStep()).listener(categoryMigrateListener)
-        .start(ItemMigrateStep()).listener(itemMigrateJobListener)
+        .start(categoryMigrateStep()).listener(categoryMigrateListener)
+        .next(ItemMigrateStep()).listener(itemMigrateJobListener)
         .build();
     }
     
@@ -118,7 +118,7 @@ public class BatchConfig {
 
         return new JdbcBatchItemWriterBuilder<Item>()
             .itemSqlParameterSourceProvider(provider)
-            .sql(INSERT_EMPLOYEE_SQL)
+            .sql(INSERT_ITEM_SQL)
             .dataSource(this.dataSource)
             .build();
     }
