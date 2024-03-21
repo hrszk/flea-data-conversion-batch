@@ -1,14 +1,10 @@
 package com.example.demo.domain;
 
-import javax.validation.constraints.NotNull;
-
 public class Original {
 
     private Integer id;
     private String name;
     private Integer conditionId;
-    
-    // @NotNull
     private String categoryName;
     private String categoryName1;
     private String categoryName2;

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.domain.Original;
@@ -15,9 +14,6 @@ public class OriginalRepository {
     
     @Autowired
     private JdbcTemplate template;
-
-    @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
 
     private static final RowMapper<Original> ORIGINAL_ROW_MAPPER=(rs,i)->{
         Original original=new Original();

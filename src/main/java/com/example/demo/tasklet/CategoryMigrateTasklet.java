@@ -114,6 +114,7 @@ public class CategoryMigrateTasklet implements Tasklet{
                         grandChildCategory.setParentId(childCategory.getId());
                         grandChildCategory.setNameAll(nameAll);
                         grandChildCategory =categoryRepositoty.insertCategory(grandChildCategory); 
+                    
                     }
                 } 
             }

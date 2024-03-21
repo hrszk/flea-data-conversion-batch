@@ -75,4 +75,12 @@ public class CategoryRepository {
         List<Category> categoryList=template.query(sql, param, CATEGORY_ROW_MAPPER);
         return categoryList.isEmpty() ? null : categoryList.get(0);
     }
+
+    // nameAllでカテゴリを曖昧検索
+    public Category findByLikeNameAll(String nameAll){
+        String sql="SELECT * FROM category WHERE name_all=:nameAll;";
+        SqlParameterSource param=new MapSqlParameterSource().addValue("nameAll",nameAll+"%");
+        List<Category> categoryList=template.query(sql, param, CATEGORY_ROW_MAPPER);
+        return categoryList.isEmpty() ? null : categoryList.get(0);
+    }
 }
