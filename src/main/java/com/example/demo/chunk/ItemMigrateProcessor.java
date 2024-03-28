@@ -50,7 +50,6 @@ public class ItemMigrateProcessor implements ItemProcessor<Original,Item>{
             }
         }else{
             count++;
-            log.info("category_nameがnullのためスキップします");
             return null;
         }
     }

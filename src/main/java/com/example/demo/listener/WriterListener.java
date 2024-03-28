@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class WriterListener implements ItemWriteListener<Item>{
+
+    int count=0;
     
     @Override
     public void beforeWrite(List<? extends Item>items){
@@ -21,7 +23,8 @@ public class WriterListener implements ItemWriteListener<Item>{
 
     @Override
     public void afterWrite(List<? extends Item>items){
-        // Do nothing
+        count = count + 10000;
+        log.info(count+"件処理が完了しました");
     }
 
     @Override

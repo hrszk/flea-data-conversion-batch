@@ -8,11 +8,8 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Component
 @StepScope
-@Slf4j
 public class CategoryMigrateTasklet2 implements Tasklet{
     
     private final JdbcTemplate jdbcTemplate;
