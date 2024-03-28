@@ -28,6 +28,7 @@ import com.example.demo.domain.Original;
 import com.example.demo.listener.CategoryMigrateListener;
 import com.example.demo.listener.ItemMigrateJobListener;
 import com.example.demo.tasklet.CategoryMigrateTasklet;
+import com.example.demo.tasklet.CategoryMigrateTasklet2;
 
 @Configuration
 @EnableBatchProcessing
@@ -41,6 +42,9 @@ public class BatchConfig {
 
     @Autowired
     private CategoryMigrateTasklet categoryMigrateTasklet;
+
+    @Autowired
+    private CategoryMigrateTasklet2 categoryMigrateTasklet2;
 
     @Autowired
     private CategoryMigrateListener categoryMigrateListener;
@@ -71,7 +75,7 @@ public class BatchConfig {
     public Job categoryMigrateJob() {
         return this.jobBuilderFactory.get("CategoryMigrateJob")
         .incrementer(new RunIdIncrementer())
-        .start(categoryMigrateStep()).listener(categoryMigrateListener)
+        .start(categoryMigrateStep2()).listener(categoryMigrateListener)
         .next(ItemMigrateStep()).listener(itemMigrateJobListener)
         .build();
     }
@@ -80,6 +84,13 @@ public class BatchConfig {
     public Step categoryMigrateStep(){
         return stepBuilderFactory.get("categoryMigrateStep")
             .tasklet(categoryMigrateTasklet)
+            .build();
+    }
+
+    @Bean
+    public Step categoryMigrateStep2(){
+        return stepBuilderFactory.get("categoryMigrateStep2")
+            .tasklet(categoryMigrateTasklet2)
             .build();
     }
 

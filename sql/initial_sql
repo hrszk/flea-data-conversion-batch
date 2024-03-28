@@ -1,0 +1,51 @@
+
+-- オリジナルテーブルの作成
+drop table if exists original cascade;
+
+CREATE TABLE original (
+train_id serial PRIMARY KEY
+,name TEXT NOT NULL
+,item_condition_id INTEGER NOT NULL
+,category_name TEXT
+,brand_name TEXT
+,price DOUBLE PRECISION
+,shipping INTEGER
+,item_description TEXT
+);
+
+-- ユーザーテーブルの作成
+drop table if exists users cascade;
+
+CREATE TABLE users (
+id serial PRIMARY KEY
+,name TEXT NOT NULL
+,mail_address TEXT NOT NULL
+,password TEXT NOT NULL
+,authority INTEGER DEFAULT 0
+);
+
+-- カテゴリーテーブルの作成
+drop table if exists category cascade;
+
+CREATE TABLE category (
+id serial PRIMARY KEY
+,name TEXT
+,parent_id INTEGER
+,name_all TEXT
+);
+
+-- 商品テーブルの作成
+drop table if exists items cascade;
+
+CREATE TABLE items (
+id serial PRIMARY KEY
+,name TEXT NOT NULL
+,condition INTEGER NOT NULL
+,category INTEGER NOT NULL
+,brand TEXT
+,price DOUBLE PRECISION NOT NULL
+,stock INTEGER DEFAULT 1
+,shipping INTEGER NOT NULL
+,description TEXT
+);
+
